@@ -26,7 +26,7 @@ public class AdminController {
     private final Gson gsonObj;
     private final SeatingDataAccessImpl seatingDataAccessImpl;
     private final ShowRepositoryDataAccessImpl showRepositoryDataAccessImpl;
-    private final ShowUtil showValidator;
+    private final ShowUtil showUtil;
 
     @GetMapping(path = "/retrieveShows", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
@@ -78,7 +78,7 @@ public class AdminController {
 
         String response = "Show " + request.getShowNumber() + " added ";
 
-        if (showValidator.isValidShowRequest(request)) {
+        if (showUtil.isValidShowRequest(request)) {
             ShowEntity showEntity = ShowEntity.builder()
                     .showNumber(request.getShowNumber())
                     .numberOfRows(request.getNumberOfRows())

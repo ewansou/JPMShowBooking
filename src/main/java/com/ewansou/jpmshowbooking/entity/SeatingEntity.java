@@ -5,11 +5,13 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.UUID;
 
 @Builder
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "shows_seating")
@@ -33,9 +35,9 @@ public class SeatingEntity {
     private Long buyerMobile;
 
     @Column(name = "ticket_number")
-    private UUID ticketNumber;
+    private String ticketNumber;
 
     @Column(name = "valid_till")
-    private Timestamp validTill;
+    private Date validTill;
 }
 

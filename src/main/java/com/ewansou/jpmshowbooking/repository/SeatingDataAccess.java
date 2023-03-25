@@ -10,4 +10,5 @@ public interface SeatingDataAccess {
     void addListShowSeatingAllocation (List<SeatingEntity> lSeatingEntity);
     List<SeatingEntity> findByShowNumber(int showNumber);
     List<SeatingEntity> findByShowNumber(int showNumber, String seatStatus);
+    SeatingEntity findBySeatNumber(int showNumber, String seatNumber);
 }

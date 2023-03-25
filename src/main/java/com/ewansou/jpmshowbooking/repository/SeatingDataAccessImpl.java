@@ -43,4 +43,9 @@ public class SeatingDataAccessImpl implements SeatingDataAccess {
         return seatingRepository.findByShowNumber(showNumber, seatSatus);
     }
 
+    @Override
+    public SeatingEntity findBySeatNumber(int showNumber, String seatNumber) {
+        return seatingRepository.findBySeatNumber(showNumber, seatNumber);
+    }
+
 }
