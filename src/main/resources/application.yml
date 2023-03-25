@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: JpmShowBooking
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/jpmshowbooking?createDatabaseIfNotExist=true
+    username: root
+    password: Zxcv1234
+
+server:
+  port: 23008

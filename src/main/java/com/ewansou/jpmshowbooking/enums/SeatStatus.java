@@ -1,6 +1,6 @@
 package com.ewansou.jpmshowbooking.enums;
 
-public enum Status {
+public enum SeatStatus {
     AVAILABLE,
     CONFIRMED,
     SOFTBOOKED;
