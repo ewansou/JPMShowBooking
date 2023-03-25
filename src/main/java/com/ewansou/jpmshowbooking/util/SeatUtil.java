@@ -1,8 +1,10 @@
 package com.ewansou.jpmshowbooking.util;
 
 import com.ewansou.jpmshowbooking.model.UIBookShow;
-import com.ewansou.jpmshowbooking.model.UIShow;
+import com.ewansou.jpmshowbooking.model.UICancelTicket;
+import com.ewansou.jpmshowbooking.repository.SeatingDataAccessImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;
@@ -11,8 +13,10 @@ import java.util.regex.Pattern;
 @Slf4j
 public class SeatUtil {
 
-    public boolean isValidBookShowRequest(UIBookShow request) {
+    @Autowired
+    SeatingDataAccessImpl seatingDataAccessImpl;
 
+    public boolean isValidBookShowRequest(UIBookShow request) {
         if (request.getShowNumber() != 0 && request.getSeats().length > 0
                 && isValidMobileNumber(request.getMobileNumber())) {
             for (String seatNumber : request.getSeats()) {
@@ -56,5 +60,19 @@ public class SeatUtil {
             return true;
         }
         return false;
+    }
+
+    public boolean isValidTicketNumber(String ticketNumber) {
+        if(seatingDataAccessImpl.findByTicketNumber(ticketNumber) == null) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isValidCancelTicketRequest(UICancelTicket request) {
+        if(!isValidMobileNumber(request.getMobileNumber()) || !isValidTicketNumber(request.getTicket())) {
+            return false;
+        }
+        return true;
     }
 }

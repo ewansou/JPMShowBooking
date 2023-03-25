@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UIBookShow {
-    private int showNumber;
+public class UICancelTicket {
+    private String ticket;
     private long mobileNumber;
-    private String[] seats;
 }
