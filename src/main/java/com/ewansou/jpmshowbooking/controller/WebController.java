@@ -2,9 +2,8 @@ package com.ewansou.jpmshowbooking.controller;
 
 import com.ewansou.jpmshowbooking.entity.ShowEntity;
 import com.ewansou.jpmshowbooking.model.UIShow;
-import com.ewansou.jpmshowbooking.repository.ShowRepository;
 import com.ewansou.jpmshowbooking.service.AdminShowManagementService;
-import com.ewansou.jpmshowbooking.util.ShowValidator;
+import com.ewansou.jpmshowbooking.util.ShowUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,7 @@ public class WebController {
 
     private final Gson gsonObj;
     private final AdminShowManagementService adminShowManagementService;
-    private final ShowValidator showValidator;
+    private final ShowUtil showValidator;
 
     @GetMapping(path = "/retrieveShows", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)

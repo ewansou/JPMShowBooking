@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ShowRepository extends JpaRepository<ShowEntity, String> {
+public interface ShowRepository extends JpaRepository<ShowEntity, Long> {
 
     @Query("SELECT c FROM ShowEntity c WHERE c.showNumber = ?1")
     ShowEntity findByShowNumber(int showNumber);

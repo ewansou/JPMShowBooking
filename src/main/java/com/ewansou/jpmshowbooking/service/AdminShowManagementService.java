@@ -1,7 +1,7 @@
 package com.ewansou.jpmshowbooking.service;
 
 import com.ewansou.jpmshowbooking.entity.ShowEntity;
-import com.ewansou.jpmshowbooking.repository.ShowRepositoryDataAccessServiceImpl;
+import com.ewansou.jpmshowbooking.repository.ShowRepositoryDataAccessImpl;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 public class AdminShowManagementService {
     private final Gson gsonObj;
-    private final ShowRepositoryDataAccessServiceImpl showRepositoryDataAccessServiceImpl;
+    private final ShowRepositoryDataAccessImpl showRepositoryDataAccessServiceImpl;
 
     public List<ShowEntity> loadShowsFromDb() {
         return showRepositoryDataAccessServiceImpl.findAll();
