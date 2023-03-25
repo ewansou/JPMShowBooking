@@ -1,12 +1,14 @@
 package com.ewansou.jpmshowbooking.repository;
 
 import com.ewansou.jpmshowbooking.entity.ShowEntity;
-import com.ewansou.jpmshowbooking.entity.ShowSeatingAllocationEntity;
+import com.ewansou.jpmshowbooking.entity.SeatingEntity;
+import com.ewansou.jpmshowbooking.enums.SeatStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -15,7 +17,9 @@ import java.util.List;
 public class ShowRepositoryDataAccessImpl implements ShowRepositoryDataAccess {
 
     private final ShowRepository showRepository;
-    private final ShowSeatingAllocationDataAccessImpl showSeatingAllocationDataAccessImpl;
+    private final SeatingDataAccessImpl showSeatingAllocationDataAccessImpl;
+
+    final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     @Override
     public List<ShowEntity> findAll() {
@@ -27,35 +31,37 @@ public class ShowRepositoryDataAccessImpl implements ShowRepositoryDataAccess {
     public void addShow(ShowEntity showEntity) {
         try {
             showRepository.save(showEntity);
-            log.info("Show number {} added into DB", showEntity.getShowNumber());
-
-            List<ShowSeatingAllocationEntity> lShowSeatingAllocationEntity =
+            List<SeatingEntity> lSeatingEntity =
                     populateShowSeatingAllocation(showEntity.getShowNumber());
-            showSeatingAllocationDataAccessImpl.addListShowSeatingAllocation(lShowSeatingAllocationEntity);
-
+            showSeatingAllocationDataAccessImpl.addListShowSeatingAllocation(lSeatingEntity);
+            log.info("Show number {} added into database", showEntity.getShowNumber());
+            log.info("Show seatings populated into database");
         } catch (Exception e) {
             log.error("Please try again. Exception occured {}", e);
         }
     }
 
-    public List<ShowSeatingAllocationEntity> populateShowSeatingAllocation(int showNumber) {
-        final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public List<SeatingEntity> populateShowSeatingAllocation(int showNumber) {
 
         ShowEntity show = findByShowNumber(showNumber);
+        List<SeatingEntity> lSeatingEntity = new ArrayList<>();
 
         if (show != null) {
             int numberOfRows = show.getNumberOfRows();
             int numberOfSeatsPerRow = show.getNumberOfSeatsPerRow();
-            String[] seats = new String[show.getTotalNumberOfSeats()];
 
             for (int i = 0; i < numberOfRows; i++) {
                 for (int j = 1; j <= numberOfSeatsPerRow; j++) {
-                    log.info(alphabet.charAt(i) + Integer.toString(j));
+                    SeatingEntity seatingAllocationEntity = SeatingEntity.builder()
+                            .showNumber(showNumber)
+                            .seatNumber(ALPHABET.charAt(i) + Integer.toString(j))
+                            .seatStatus(SeatStatus.AVAILABLE.toString())
+                            .build();
+                    lSeatingEntity.add(seatingAllocationEntity);
                 }
             }
-
         }
-        return null;
+        return lSeatingEntity;
     }
 
     @Override

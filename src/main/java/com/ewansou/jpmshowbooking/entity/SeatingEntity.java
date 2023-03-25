@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "shows_seating")
-public class ShowSeatingAllocationEntity {
+public class SeatingEntity {
 
     @Id
     @Column(name = "id")
@@ -27,7 +27,7 @@ public class ShowSeatingAllocationEntity {
     private String seatNumber;
 
     @Column(name = "status")
-    private SeatStatus seatStatus;
+    private String seatStatus;
 
     @Column(name = "buyer_mobile")
     private Long buyerMobile;
@@ -36,6 +36,6 @@ public class ShowSeatingAllocationEntity {
     private UUID ticketNumber;
 
     @Column(name = "valid_till")
-    private Timestamp time;
+    private Timestamp validTill;
 }
 

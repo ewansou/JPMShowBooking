@@ -1,14 +1,10 @@
 package com.ewansou.jpmshowbooking.util;
 
-import com.ewansou.jpmshowbooking.entity.ShowEntity;
-import com.ewansou.jpmshowbooking.entity.ShowSeatingAllocationEntity;
 import com.ewansou.jpmshowbooking.model.UIShow;
 import com.ewansou.jpmshowbooking.repository.ShowRepositoryDataAccessImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 @Slf4j
