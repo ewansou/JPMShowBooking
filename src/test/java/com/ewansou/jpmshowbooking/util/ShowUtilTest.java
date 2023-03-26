@@ -1,12 +1,13 @@
 package com.ewansou.jpmshowbooking.util;
 
 import com.ewansou.jpmshowbooking.model.UIShow;
-import org.junit.Assert;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -26,13 +27,10 @@ public class ShowUtilTest {
             "5, 4, 11, 0, false"
     })
     void testIsValidShowRequest(int showNumber, int numberOfRow, int numberOfSeatsPerRow,
-                                int cancellationWindowInMinutes,  boolean result) {
+                                int cancellationWindowInMinutes, boolean result) {
         UIShow input = new UIShow(showNumber, numberOfRow, numberOfSeatsPerRow, cancellationWindowInMinutes);
-        Assert.assertEquals(showUtil.isValidShowRequest(input), result);
+        assertEquals(showUtil.isValidShowRequest(input), result);
     }
-
-
-
 
 
 }

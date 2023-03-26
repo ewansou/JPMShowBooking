@@ -1,7 +1,6 @@
 package com.ewansou.jpmshowbooking.util;
 
 import com.ewansou.jpmshowbooking.model.UIBookShow;
-import org.junit.Assert;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -11,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -25,10 +26,13 @@ public class SeatUtilTest {
             "A345, false",
             "A23, true",
             "*x, false",
-            "12, false"
+            "12, false",
+            "888, false",
+            "AA2, false",
+            "A8V, false"
     })
     void testIsValidSeatNumber(String seatNumber, boolean result) {
-        Assert.assertEquals(seatUtil.isValidSeatNumber(seatNumber), result);
+        assertEquals(seatUtil.isValidSeatNumber(seatNumber), result);
     }
 
     @ParameterizedTest
@@ -40,14 +44,14 @@ public class SeatUtilTest {
             "777, false"
     })
     void testIsValidMobileNumber(long mobileNumber, boolean result) {
-        Assert.assertEquals(seatUtil.isValidMobileNumber(mobileNumber), result);
+        assertEquals(seatUtil.isValidMobileNumber(mobileNumber), result);
     }
 
     @ParameterizedTest
     @MethodSource("generateDataForBookShowRequest")
-    void testIsValidSeatNumber(int showNumber, long mobileNumber, String[] seats, boolean result) {
+    void testIsValidBookShowRequest(int showNumber, long mobileNumber, String[] seats, boolean result) {
         UIBookShow input = new UIBookShow(showNumber, mobileNumber, seats);
-        Assert.assertEquals(seatUtil.isValidBookShowRequest(input), result);
+        assertEquals(seatUtil.isValidBookShowRequest(input), result);
     }
 
     static Stream<Arguments> generateDataForBookShowRequest() {

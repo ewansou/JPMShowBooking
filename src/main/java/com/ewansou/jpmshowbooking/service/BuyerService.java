@@ -56,10 +56,15 @@ public class BuyerService {
                             seatingEntity.setTicketNumber(UUID.randomUUID().toString());
                             seatingEntity.setValidTill(new Date(System.currentTimeMillis() +
                                     (show.getCancellationWindowInMinutes() * 60000)));
-                            seatingRepository.save(seatingEntity);
-                            lTicketsBooked.add(seatingEntity.getTicketNumber());
-                            log.info("Seat number {} for show number {} booked success", seatNumber,
-                                    request.getShowNumber());
+                            try {
+                                seatingRepository.save(seatingEntity);
+                                lTicketsBooked.add(seatingEntity.getTicketNumber());
+                                log.info("Seat number {} for show number {} booked success", seatNumber,
+                                        request.getShowNumber());
+                            } catch (Exception e) {
+                                log.warn("Optimistic Locking Exception. More than 1 user booking same seat.");
+                                e.printStackTrace();
+                            }
                         } else {
                             log.warn("Seat number {}  for show number {} is not available for booking", seatNumber,
                                     request.getShowNumber());
@@ -72,6 +77,7 @@ public class BuyerService {
         } else {
             log.warn("Request to book seats failed. Invalid booking request");
         }
+
         return lTicketsBooked;
     }
 
