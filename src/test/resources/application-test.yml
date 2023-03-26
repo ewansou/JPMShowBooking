@@ -8,9 +8,9 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
-  #sql:
-    #init:
-      #platform: integration-test
+  sql:
+    init:
+      platform: integration-test
 
 server:
   port: 23008

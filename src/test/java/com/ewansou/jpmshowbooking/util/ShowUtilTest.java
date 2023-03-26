@@ -10,10 +10,10 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class ShowUtilTest {
+public class ShowUtilTest {
 
     @Autowired
-    ShowUtil showUtil;
+    private ShowUtil showUtil;
 
     @ParameterizedTest
     @CsvSource(value = {

@@ -14,10 +14,10 @@ import java.util.stream.Stream;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class SeatUtilTest {
+public class SeatUtilTest {
 
     @Autowired
-    SeatUtil seatUtil;
+    private SeatUtil seatUtil;
 
     @ParameterizedTest
     @CsvSource(value = {
