@@ -12,4 +12,5 @@ public interface SeatingDataAccess {
     List<SeatingEntity> findByShowNumber(int showNumber, String seatStatus);
     SeatingEntity findBySeatNumber(int showNumber, String seatNumber);
     SeatingEntity findByTicketNumber(String ticketNumber);
+
 }

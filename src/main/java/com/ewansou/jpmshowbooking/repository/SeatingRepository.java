@@ -21,4 +21,7 @@ public interface SeatingRepository extends JpaRepository<SeatingEntity, Long> {
 
     @Query("SELECT c FROM SeatingEntity c WHERE c.ticketNumber = ?1")
     SeatingEntity findByTicketNumber(String ticketNumber);
+
+    @Query("SELECT c FROM SeatingEntity c WHERE c.showNumber = ?1 AND c.buyerMobile = ?2")
+    List<SeatingEntity> checkBuyerBookOnce(int showNumber, long buyerMobile);
 }

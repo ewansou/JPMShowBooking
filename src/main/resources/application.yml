@@ -15,3 +15,7 @@ spring:
 
 server:
   port: 23008
+
+settings:
+  max-seats-per-row: 10
+  max-rows: 26

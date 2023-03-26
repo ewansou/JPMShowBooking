@@ -40,7 +40,8 @@ public class BuyerService {
     public List<String> bookSeats(UIBookShow request) {
         List<String> lTicketsBooked = new ArrayList<>();
 
-        if (seatUtil.isValidBookShowRequest(request)) {
+        if (seatingRepository.checkBuyerBookOnce(request.getShowNumber(), request.getMobileNumber()).size() == 0 &&
+                seatUtil.isValidBookShowRequest(request)) {
             ShowEntity show = showRepositoryDataAccessImpl.findByShowNumber(request.getShowNumber());
 
             for (String seatNumber : request.getSeats()) {
@@ -49,14 +50,14 @@ public class BuyerService {
                             .findBySeatNumber(request.getShowNumber(), seatNumber);
 
                     if (seatingEntity.getSeatStatus().equals(SeatStatus.AVAILABLE.toString())) {
-                        seatingEntity.setSeatStatus(SeatStatus.SOFTBOOKED.toString());
+                        seatingEntity.setSeatStatus(SeatStatus.BOOKED.toString());
                         seatingEntity.setBuyerMobile(request.getMobileNumber());
                         seatingEntity.setTicketNumber(UUID.randomUUID().toString());
                         seatingEntity.setValidTill(new Date(System.currentTimeMillis() +
                                 (show.getCancellationWindowInMinutes() * 60000)));
                         seatingRepository.save(seatingEntity);
                         lTicketsBooked.add(seatingEntity.getTicketNumber());
-                        log.info("Seat number {} for show number {} softbooked success", seatNumber,
+                        log.info("Seat number {} for show number {} booked success", seatNumber,
                                 request.getShowNumber());
                     } else {
                         log.warn("Seat number {}  for show number {} is not available for booking", seatNumber,
@@ -73,13 +74,13 @@ public class BuyerService {
     }
 
     public String cancelTicket(UICancelTicket request) {
-        if(seatUtil.isValidCancelTicketRequest(request)) {
-           SeatingEntity seatingEntity = seatingDataAccessImpl.findByTicketNumber(request.getTicket());
-           if(seatingEntity.getValidTill().before(new Date(System.currentTimeMillis()))) {
-               log.info("Ticket number {} can't be cancelled anymore. Passed cancellation window", request.getTicket());
+        if (seatUtil.isValidCancelTicketRequest(request)) {
+            SeatingEntity seatingEntity = seatingDataAccessImpl.findByTicketNumber(request.getTicket());
+            if (seatingEntity.getValidTill().before(new Date(System.currentTimeMillis()))) {
+                log.info("Ticket number {} can't be cancelled anymore. Passed cancellation window", request.getTicket());
                 return "Ticket cancellation failed. Ticket passed cancellation window.";
-           } else {
-                if(seatingEntity.getBuyerMobile() != request.getMobileNumber()) {
+            } else {
+                if (seatingEntity.getBuyerMobile() != request.getMobileNumber()) {
                     log.warn("Ticket number {} does not below to user with mobile number {}. Cancel ticket failed",
                             request.getTicket(), request.getMobileNumber());
                     return "Ticket cancellation failed. Ticket number and mobile number don't match.";
@@ -93,7 +94,7 @@ public class BuyerService {
                     log.info("Ticket cancelled successfully");
                     return "Ticket cancelled successfully";
                 }
-           }
+            }
         } else {
             return "Ticket cancellation failed. Invalid request.";
         }
