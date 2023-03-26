@@ -29,12 +29,6 @@ public final class ShowUtil {
             log.warn("User has entered invalid show parameter");
             return false;
         }
-
-        if (showRepositoryDataAccessServiceImpl.findByShowNumber(request.getShowNumber()) != null) {
-            log.warn("Show number {} has already been added", request.getShowNumber());
-            return false;
-        } else {
-            return true;
-        }
+        return true;
     }
 }

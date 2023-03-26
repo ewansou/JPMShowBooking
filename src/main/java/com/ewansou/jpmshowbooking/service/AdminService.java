@@ -37,22 +37,28 @@ public class AdminService {
         return seatingDataAccessImpl.findByShowNumber(showNumber, seatStatus);
     }
 
-    public ShowEntity viewShow (int showNumber) {
+    public ShowEntity viewShow(int showNumber) {
         return showRepositoryDataAccessImpl.findByShowNumber(showNumber);
     }
 
     public String setupShow(UIShow request) {
         if (showUtil.isValidShowRequest(request)) {
-            ShowEntity showEntity = ShowEntity.builder()
-                    .showNumber(request.getShowNumber())
-                    .numberOfRows(request.getNumberOfRows())
-                    .numberOfSeatsPerRow(request.getNumberOfSeatsPerRow())
-                    .totalNumberOfSeats(request.getNumberOfRows() * request.getNumberOfSeatsPerRow())
-                    .cancellationWindowInMinutes(request.getCancellationWindowInMinutes())
-                    .build();
-            showRepositoryDataAccessImpl.addShow(showEntity);
-            return "success";
+            if (showRepositoryDataAccessImpl.findByShowNumber(request.getShowNumber()) == null) {
+                ShowEntity showEntity = ShowEntity.builder()
+                        .showNumber(request.getShowNumber())
+                        .numberOfRows(request.getNumberOfRows())
+                        .numberOfSeatsPerRow(request.getNumberOfSeatsPerRow())
+                        .totalNumberOfSeats(request.getNumberOfRows() * request.getNumberOfSeatsPerRow())
+                        .cancellationWindowInMinutes(request.getCancellationWindowInMinutes())
+                        .build();
+                showRepositoryDataAccessImpl.addShow(showEntity);
+                return "success";
+            } else {
+                log.info("Show number {} can't be added as it is already in database", request.getShowNumber());
+                return "failed";
+            }
         } else {
+            log.info("Invalid show request");
             return "failed";
         }
     }

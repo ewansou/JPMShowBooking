@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: test
+    password: password
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  #sql:
+    #init:
+      #platform: integration-test
+
+server:
+  port: 23008
+
+settings:
+  max-seats-per-row: 10
+  max-rows: 26

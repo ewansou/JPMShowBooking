@@ -40,31 +40,33 @@ public class BuyerService {
     public List<String> bookSeats(UIBookShow request) {
         List<String> lTicketsBooked = new ArrayList<>();
 
-        if (seatingRepository.checkBuyerBookOnce(request.getShowNumber(), request.getMobileNumber()).size() == 0 &&
-                seatUtil.isValidBookShowRequest(request)) {
+        if (seatingRepository.checkBuyerBookOnce(request.getShowNumber(), request.getMobileNumber()).size() == 0
+                && seatUtil.isValidBookShowRequest(request)) {
             ShowEntity show = showRepositoryDataAccessImpl.findByShowNumber(request.getShowNumber());
 
             for (String seatNumber : request.getSeats()) {
-                try {
-                    SeatingEntity seatingEntity = seatingDataAccessImpl
-                            .findBySeatNumber(request.getShowNumber(), seatNumber);
+                if (seatUtil.isValidSeatNumber(seatNumber)) {
+                    try {
+                        SeatingEntity seatingEntity = seatingDataAccessImpl
+                                .findBySeatNumber(request.getShowNumber(), seatNumber);
 
-                    if (seatingEntity.getSeatStatus().equals(SeatStatus.AVAILABLE.toString())) {
-                        seatingEntity.setSeatStatus(SeatStatus.BOOKED.toString());
-                        seatingEntity.setBuyerMobile(request.getMobileNumber());
-                        seatingEntity.setTicketNumber(UUID.randomUUID().toString());
-                        seatingEntity.setValidTill(new Date(System.currentTimeMillis() +
-                                (show.getCancellationWindowInMinutes() * 60000)));
-                        seatingRepository.save(seatingEntity);
-                        lTicketsBooked.add(seatingEntity.getTicketNumber());
-                        log.info("Seat number {} for show number {} booked success", seatNumber,
-                                request.getShowNumber());
-                    } else {
-                        log.warn("Seat number {}  for show number {} is not available for booking", seatNumber,
-                                request.getShowNumber());
+                        if (seatingEntity.getSeatStatus().equals(SeatStatus.AVAILABLE.toString())) {
+                            seatingEntity.setSeatStatus(SeatStatus.BOOKED.toString());
+                            seatingEntity.setBuyerMobile(request.getMobileNumber());
+                            seatingEntity.setTicketNumber(UUID.randomUUID().toString());
+                            seatingEntity.setValidTill(new Date(System.currentTimeMillis() +
+                                    (show.getCancellationWindowInMinutes() * 60000)));
+                            seatingRepository.save(seatingEntity);
+                            lTicketsBooked.add(seatingEntity.getTicketNumber());
+                            log.info("Seat number {} for show number {} booked success", seatNumber,
+                                    request.getShowNumber());
+                        } else {
+                            log.warn("Seat number {}  for show number {} is not available for booking", seatNumber,
+                                    request.getShowNumber());
+                        }
+                    } catch (NullPointerException e) {
+                        log.warn("Invalid seat number {} for show number {}", seatNumber, request.getShowNumber());
                     }
-                } catch (NullPointerException e) {
-                    log.warn("Invalid seat number {} for show number {}", seatNumber, request.getShowNumber());
                 }
             }
         } else {
@@ -74,7 +76,7 @@ public class BuyerService {
     }
 
     public String cancelTicket(UICancelTicket request) {
-        if (seatUtil.isValidCancelTicketRequest(request)) {
+        if (seatUtil.isValidMobileNumber(request.getMobileNumber()) && isValidTicketNumber(request.getTicket())) {
             SeatingEntity seatingEntity = seatingDataAccessImpl.findByTicketNumber(request.getTicket());
             if (seatingEntity.getValidTill().before(new Date(System.currentTimeMillis()))) {
                 log.info("Ticket number {} can't be cancelled anymore. Passed cancellation window", request.getTicket());
@@ -98,6 +100,13 @@ public class BuyerService {
         } else {
             return "Ticket cancellation failed. Invalid request.";
         }
+    }
+
+    public boolean isValidTicketNumber(String ticketNumber) {
+        if (seatingDataAccessImpl.findByTicketNumber(ticketNumber) == null) {
+            return false;
+        }
+        return true;
     }
 
 
