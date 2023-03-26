@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -49,28 +50,28 @@ class BuyerServiceTest {
     @Test
     void testBookSeatsWhenSameUserBookedTwice() {
         UIBookShow data = new UIBookShow(1, 97801671, new String[]{"A1"});
-        List<String> ticketBooked = buyerService.bookSeats(data);
+        Map<String, String> ticketBooked = buyerService.bookSeats(data);
         assertEquals(ticketBooked.size(), 1);
 
         //Same user proceed to book a different seat in the same show again
         UIBookShow data2 = new UIBookShow(1, 97801671, new String[]{"A2"});
-        List<String> ticketBooked2 = buyerService.bookSeats(data2);
+        Map<String, String> ticketBooked2 = buyerService.bookSeats(data2);
         assertEquals(ticketBooked2.size(), 0);
-        assertEquals(ticketBooked2, Collections.emptyList());
+        assertEquals(ticketBooked2, Collections.emptyMap());
     }
 
     @Test
     void testBookSeatsWithIncorrectSeats() {
         UIBookShow data = new UIBookShow(1, 97801671, new String[]{"Z1"});
-        List<String> ticketBooked = buyerService.bookSeats(data);
-        assertEquals(ticketBooked, Collections.emptyList());
+        Map<String, String> ticketBooked = buyerService.bookSeats(data);
+        assertEquals(ticketBooked, Collections.emptyMap());
     }
 
     @Test
     void testBookSeats() {
         UIBookShow data = new UIBookShow(1, 97801671, new String[]{"A1"});
 
-        List<String> ticketBooked = buyerService.bookSeats(data);
+        Map<String, String> ticketBooked = buyerService.bookSeats(data);
 
         assertEquals(ticketBooked.size(), 1);
         assertEquals(Long.toString(seatingDataAccessImpl.findBySeatNumber(1, "A1")
@@ -90,20 +91,20 @@ class BuyerServiceTest {
     @Test
     void testBookSeatsWhenSeatNotAvailable() {
         UIBookShow data = new UIBookShow(1, 97801671, new String[]{"A1"});
-        List<String> ticketBooked = buyerService.bookSeats(data);
+        Map<String, String> ticketBooked = buyerService.bookSeats(data);
         assertEquals(ticketBooked.size(), 1);
 
         UIBookShow data2 = new UIBookShow(1, 90691453, new String[]{"A1"});
-        assertEquals(buyerService.bookSeats(data2), Collections.emptyList());
+        assertEquals(buyerService.bookSeats(data2), Collections.emptyMap());
     }
 
     @Test
     void testCancelTicket() {
         UIBookShow bookData = new UIBookShow(1, 97801671, new String[]{"A1"});
-        List<String> ticketBooked = buyerService.bookSeats(bookData);
+        Map<String, String> ticketBooked = buyerService.bookSeats(bookData);
         assertEquals(ticketBooked.size(), 1);
 
-        UICancelTicket cancelData = new UICancelTicket(ticketBooked.get(0), 97801671);
+        UICancelTicket cancelData = new UICancelTicket(ticketBooked.get("A1"), 97801671);
         assertEquals(buyerService.cancelTicket(cancelData), "Ticket cancelled successfully");
         assertEquals(seatingDataAccessImpl.findBySeatNumber(1, "A1").getSeatStatus(),
                 SeatStatus.AVAILABLE.toString());
@@ -118,16 +119,16 @@ class BuyerServiceTest {
     @Test
     void testCancelTicketPastExpiry() {
         UIBookShow bookData = new UIBookShow(1, 97801671, new String[]{"A1"});
-        List<String> ticketBooked = buyerService.bookSeats(bookData);
+        Map<String, String> ticketBooked = buyerService.bookSeats(bookData);
         assertEquals(ticketBooked.size(), 1);
 
-        SeatingEntity seat = seatingDataAccessImpl.findByTicketNumber(ticketBooked.get(0));
+        SeatingEntity seat = seatingDataAccessImpl.findByTicketNumber(ticketBooked.get("A1"));
         //After retrieving ticket, alter its validTill time for the purpose of testing
         //Set validTill time to be current time - 10 minutes
         seat.setValidTill(new Date(System.currentTimeMillis() - (10 * 60000)));
         seatingRepository.save(seat);
 
-        UICancelTicket cancelData = new UICancelTicket(ticketBooked.get(0), 97801671);
+        UICancelTicket cancelData = new UICancelTicket(ticketBooked.get("A1"), 97801671);
         assertEquals(buyerService.cancelTicket(cancelData),
                 "Ticket cancellation failed. Ticket passed cancellation window.");
         assertEquals(seatingDataAccessImpl.findBySeatNumber(1, "A1").getSeatStatus(),
@@ -141,10 +142,10 @@ class BuyerServiceTest {
     @Test
     void testCancelTicketWithInvalidRequest() {
         UIBookShow bookData = new UIBookShow(1, 97801671, new String[]{"A1"});
-        List<String> ticketBooked = buyerService.bookSeats(bookData);
+        Map<String, String> ticketBooked = buyerService.bookSeats(bookData);
         assertEquals(ticketBooked.size(), 1);
 
-        UICancelTicket cancelData = new UICancelTicket(ticketBooked.get(0), 123);
+        UICancelTicket cancelData = new UICancelTicket(ticketBooked.get("A1"), 123);
         assertEquals(buyerService.cancelTicket(cancelData),
                 "Ticket cancellation failed. Invalid request.");
         UICancelTicket cancelData2 = new UICancelTicket("invalidticketnumber", 97801671);
@@ -155,10 +156,10 @@ class BuyerServiceTest {
     @Test
     void testCancelTicketWithInvalidMobileNumber() {
         UIBookShow bookData = new UIBookShow(1, 97801671, new String[]{"A1"});
-        List<String> ticketBooked = buyerService.bookSeats(bookData);
+        Map<String, String> ticketBooked = buyerService.bookSeats(bookData);
         assertEquals(ticketBooked.size(), 1);
 
-        UICancelTicket cancelData = new UICancelTicket(ticketBooked.get(0), 90691453);
+        UICancelTicket cancelData = new UICancelTicket(ticketBooked.get("A1"), 90691453);
         assertEquals(buyerService.cancelTicket(cancelData),
                 "Ticket cancellation failed. Ticket number and mobile number don't match.");
     }
@@ -166,10 +167,10 @@ class BuyerServiceTest {
     @Test
     void testIsValidTicketNumber() {
         UIBookShow bookData = new UIBookShow(1, 97801671, new String[]{"A1"});
-        List<String> ticketBooked = buyerService.bookSeats(bookData);
+        Map<String, String> ticketBooked = buyerService.bookSeats(bookData);
         assertEquals(ticketBooked.size(), 1);
 
-        String validTicketNumber = seatingDataAccessImpl.findByTicketNumber(ticketBooked.get(0)).getTicketNumber();
+        String validTicketNumber = seatingDataAccessImpl.findByTicketNumber(ticketBooked.get("A1")).getTicketNumber();
 
         assertEquals(buyerService.isValidTicketNumber(validTicketNumber), true);
         assertEquals(buyerService.isValidTicketNumber("randomticketnumber"), false);

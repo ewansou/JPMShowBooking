@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -37,8 +39,8 @@ public class BuyerService {
         return availableSeats;
     }
 
-    public List<String> bookSeats(UIBookShow request) {
-        List<String> lTicketsBooked = new ArrayList<>();
+    public Map<String, String> bookSeats(UIBookShow request) {
+        Map<String, String> TicketsBookedMap = new HashMap<>();
 
         if (seatingRepository.checkBuyerBookOnce(request.getShowNumber(), request.getMobileNumber()).size() == 0
                 && seatUtil.isValidBookShowRequest(request)) {
@@ -58,7 +60,7 @@ public class BuyerService {
                                     (show.getCancellationWindowInMinutes() * 60000)));
                             try {
                                 seatingRepository.save(seatingEntity);
-                                lTicketsBooked.add(seatingEntity.getTicketNumber());
+                                TicketsBookedMap.put(seatNumber, seatingEntity.getTicketNumber());
                                 log.info("Seat number {} for show number {} booked success", seatNumber,
                                         request.getShowNumber());
                             } catch (Exception e) {
@@ -78,7 +80,7 @@ public class BuyerService {
             log.warn("Request to book seats failed. Invalid booking request");
         }
 
-        return lTicketsBooked;
+        return TicketsBookedMap;
     }
 
     public String cancelTicket(UICancelTicket request) {

@@ -44,7 +44,7 @@ public class BuyerController {
     @PostMapping(path = "/bookSeats", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
-    List<String> bookSeats(@RequestBody UIBookShow request) {
+    Map<String, String> bookSeats(@RequestBody UIBookShow request) {
         log.info("Received request to book seats: {}", gsonObj.toJson(request, UIBookShow.class));
         return buyerService.bookSeats(request);
     }
