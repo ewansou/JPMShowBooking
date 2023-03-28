@@ -1,29 +1,27 @@
 package com.ewansou.jpmshowbooking.controller;
 
 import com.ewansou.jpmshowbooking.entity.SeatingEntity;
-import com.ewansou.jpmshowbooking.entity.ShowEntity;
-import com.ewansou.jpmshowbooking.enums.SeatStatus;
 import com.ewansou.jpmshowbooking.model.UIBookShow;
 import com.ewansou.jpmshowbooking.model.UICancelTicket;
-import com.ewansou.jpmshowbooking.model.UIShow;
-import com.ewansou.jpmshowbooking.repository.SeatingDataAccessImpl;
-import com.ewansou.jpmshowbooking.repository.SeatingRepository;
-import com.ewansou.jpmshowbooking.repository.ShowRepositoryDataAccessImpl;
 import com.ewansou.jpmshowbooking.service.BuyerService;
-import com.ewansou.jpmshowbooking.util.SeatUtil;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Controller
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin
 @RequestMapping(value = "/buyer/api")
 @RequiredArgsConstructor
 @Slf4j
@@ -44,7 +42,7 @@ public class BuyerController {
     @PostMapping(path = "/bookSeats", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
-    Map<String, String> bookSeats(@RequestBody UIBookShow request) {
+    List<SeatingEntity> bookSeats(@RequestBody UIBookShow request) {
         log.info("Received request to book seats: {}", gsonObj.toJson(request, UIBookShow.class));
         return buyerService.bookSeats(request);
     }
